@@ -4,16 +4,14 @@ class AddressBookMain:
         self.address_book: AddressBook = AddressBook()
         self.__run()
 
-
     def __menu(self) -> None:
         print(f'{"-"*10} Select Option {"-"*10}')
         print('1. Add Contact')
-        print('2. Show All Contacts')
-        print('3. Edit Contact')
-        print('4. Delete Contact')
-        print('5. Exit')
-
-
+        print('2. Add Multiple Contacts')
+        print('3. Show All Contacts')
+        print('4. Edit Contact')
+        print('5. Delete Contact')
+        print('6. Exit')
 
     def __run(self) -> None:
         while True:
@@ -22,18 +20,18 @@ class AddressBookMain:
             if option == 1:
                 self.__add_contact()
             elif option == 2:
-                self.__show_all_contacts()
+                self.__add_multiple_contacts()
             elif option == 3:
-                self.__edit_contact()
+                self.__show_all_contacts()
             elif option == 4:
-                self.__delete_contact()
+                self.__edit_contact()
             elif option == 5:
+                self.__delete_contact()
+            elif option == 6:
                 print("Exiting Address Book Program")
                 break
             else:
                 print("Invalid option, please try again.")
-
-
 
     def __get_valid_int_input(self, prompt: str) -> int:
         while True:
@@ -42,12 +40,14 @@ class AddressBookMain:
             except ValueError:
                 print("Invalid input. Please enter a valid integer.")
 
-
-
     def __add_contact(self) -> None:
         self.address_book.add_contact()
 
-
+    def __add_multiple_contacts(self) -> None:
+        num_contacts: int = self.__get_valid_int_input("Enter the number of contacts to add: ")
+        for _ in range(num_contacts):
+            print(f"\nAdding contact {_ + 1}:")
+            self.address_book.add_contact()
 
     def __show_all_contacts(self) -> None:
         contacts: list[Contact] = self.address_book.get_all_contacts()
@@ -56,8 +56,6 @@ class AddressBookMain:
         else:
             for contact in contacts:
                 print(contact)
-
-
 
     def __edit_contact(self) -> None:
         first_name: str = input("Enter the First Name of the contact to edit: ")
@@ -68,8 +66,6 @@ class AddressBookMain:
         else:
             print("Contact not found.")
 
-
-
     def __delete_contact(self) -> None:
         first_name: str = input("Enter the First Name of the contact to delete: ")
         last_name: str = input("Enter the Last Name of the contact to delete: ")
@@ -78,7 +74,6 @@ class AddressBookMain:
             print("Contact deleted successfully.")
         else:
             print("Contact not found.")
-
 
 
 class AddressBook:
@@ -101,22 +96,27 @@ class AddressBook:
         for c in self.__contacts:
             if contact == c:
                 print(
-                    f"The contact with first name: {first_name} and last name: {last_name} already exists in AddressBook")
+                    f"Sorry, the contact with first name: {first_name} and last name: {last_name} already exists in AddressBook")
                 return
         self.__contacts.append(contact)
         print("Contact added successfully.")
 
+    def add_multiple_contacts(self, num_contacts: int) -> None:
+        '''Add multiple contact to the address book
+        '''
+        for _ in range(num_contacts):
+            print(f"\nAdding contact {_ + 1}:")
+            self.add_contact()
 
     def get_all_contacts(self):
         return self.__contacts
-    
 
     def edit_contact(self, first_name: str, last_name: str) -> bool:
         '''Edit a contact in the address book
         '''
         for i, contact in enumerate(self.__contacts):
             if contact.get_first_name() == first_name and contact.get_last_name() == last_name:
-                print("Contact found.Enter new details:")
+                print("Contact found. Enter new details:")
                 new_first_name: str = input("Enter new First Name (leave blank to keep current): ") or contact.get_first_name()
                 new_last_name: str = input("Enter new Last Name (leave blank to keep current): ") or contact.get_last_name()
                 new_address: str = input("Enter new Address (leave blank to keep current): ") or contact.get_address()
@@ -130,8 +130,6 @@ class AddressBook:
                 self.__contacts[i] = updated_contact
                 return True
         return False
-    
-    
 
     def delete_contact(self, first_name: str, last_name: str) -> bool:
         '''Delete a contact from the address book by name'''
