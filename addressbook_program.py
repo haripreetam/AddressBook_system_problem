@@ -65,13 +65,13 @@ class AddressBook:
             print("Contact added successfully.")
 
     def add_multiple_contacts(self, num_contacts: int) -> None:
-        '''Adding multiple contacts.'''
+        '''Adding multiple contacts'''
         for _ in range(num_contacts):
             print(f"\nAdding contact {_ + 1}:")
             self.add_contact()
 
     def show_all_contacts(self) -> None:
-        '''Display all contacts.'''
+        '''Displaying contacts'''
         if not self.__contacts:
             print("No contacts found.")
         else:
@@ -79,7 +79,6 @@ class AddressBook:
                 print(contact)
 
     def edit_contact(self) -> None:
-        '''Edit a contact in the address book.'''
         first_name: str = input(
             "Enter the First Name of the contact to edit: ")
         last_name: str = input("Enter the Last Name of the contact to edit: ")
@@ -90,6 +89,7 @@ class AddressBook:
             print("Contact not found.")
 
     def edit_contact_details(self, first_name: str, last_name: str) -> bool:
+        '''Editing contacts by Firstname and Lastname.'''
         for i, contact in enumerate(self.__contacts):
             if contact.get_first_name() == first_name and contact.get_last_name() == last_name:
                 print("Contact found. Enter new details:")
@@ -135,6 +135,10 @@ class AddressBook:
                 return True
         return False
 
+    def search_contacts_by_city_or_state(self, search_term: str) -> list[Contact]:
+        '''Searching contacts by city or state.'''
+        return [contact for contact in self.__contacts if contact.get_city() == search_term or contact.get_state() == search_term]
+
 
 class AddressBookMain:
     def __init__(self):
@@ -148,7 +152,8 @@ class AddressBookMain:
         print('2. Select Address Book')
         print('3. Show All Address Books')
         print('4. Delete Address Book')
-        print('5. Exit')
+        print('5. Search Contacts by City or State')
+        print('6. Exit')
 
     def __run(self) -> None:
         while True:
@@ -163,6 +168,8 @@ class AddressBookMain:
             elif option == 4:
                 self.__delete_address_book()
             elif option == 5:
+                self.__search_contacts_by_city_or_state()
+            elif option == 6:
                 print("Exiting Address Book Program")
                 break
             else:
@@ -236,6 +243,23 @@ class AddressBookMain:
             print(f"Address Book '{name}' deleted successfully.")
         else:
             print(f"Address Book '{name}' not found.")
+
+    def __search_contacts_by_city_or_state(self) -> None:
+        search_term: str = input(
+            "Enter the City or State to search for contacts: ")
+        found_contacts: list[Contact] = []
+
+        for address_book in self.__address_books.values():
+            found_contacts.extend(
+                address_book.search_contacts_by_city_or_state(search_term))
+
+        if found_contacts:
+            print(
+                f"Found {len(found_contacts)} contact(s) in '{search_term}':")
+            for contact in found_contacts:
+                print(contact)
+        else:
+            print(f"No contacts found in '{search_term}'.")
 
 
 if __name__ == "__main__":
