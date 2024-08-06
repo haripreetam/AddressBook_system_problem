@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Callable
 
 
 class Contact:
@@ -57,7 +58,6 @@ class AddressBook:
                                               list[Contact]] = defaultdict(list)
 
     def add_contact(self) -> None:
-        '''Adding new contacts'''
         first_name: str = input("Enter First Name: ")
         last_name: str = input("Enter Last Name: ")
         address: str = input("Enter Address: ")
@@ -78,7 +78,7 @@ class AddressBook:
             print("Contact added successfully.")
 
     def add_multiple_contacts(self, num_contacts: int) -> None:
-        '''Adding multiple contacts'''
+        '''Adding mutiple contacts'''
         for _ in range(num_contacts):
             print(f"\nAdding contact {_ + 1}:")
             self.add_contact()
@@ -92,6 +92,7 @@ class AddressBook:
                 print(contact)
 
     def edit_contact(self) -> None:
+        '''Editing contacts'''
         first_name: str = input(
             "Enter the First Name of the contact to edit: ")
         last_name: str = input("Enter the Last Name of the contact to edit: ")
@@ -102,7 +103,7 @@ class AddressBook:
             print("Contact not found.")
 
     def edit_contact_details(self, first_name: str, last_name: str) -> bool:
-        '''Editing contact details by their firstname and lastname'''
+        '''Editing contacts by firstname and lastname'''
         for i, contact in enumerate(self.__contacts):
             if contact.get_first_name() == first_name and contact.get_last_name() == last_name:
                 print("Contact found. Enter new details:")
@@ -137,6 +138,24 @@ class AddressBook:
 
                 return True
         return False
+    
+
+    def sort_contacts(self, key_func) -> None:
+        sorted_contacts = sorted(self.__contacts, key=key_func)
+        for contact in sorted_contacts:
+            print(contact)
+
+    def sort_contacts_by_city(self) -> None:
+        '''sorting contacts by city'''
+        self.sort_contacts(lambda contact: contact.get_city())
+
+    def sort_contacts_by_state(self) -> None:
+        '''sorting contacts by state'''
+        self.sort_contacts(lambda contact: contact.get_state())
+
+    def sort_contacts_by_zip(self) -> None:
+        '''sorting contacts by zipcode.'''
+        self.sort_contacts(lambda contact: contact.get_zip_code())
 
     def delete_contact(self) -> None:
         first_name: str = input(
@@ -150,7 +169,7 @@ class AddressBook:
             print("Contact not found.")
 
     def delete_contact_details(self, first_name: str, last_name: str) -> bool:
-        '''Deleting contact details by their firstname and lastname'''
+        '''deleting contacts by firstname and lastname'''
         for i, contact in enumerate(self.__contacts):
             if contact.get_first_name() == first_name and contact.get_last_name() == last_name:
                 self.__contacts_by_city[contact.get_city()].remove(contact)
@@ -160,7 +179,6 @@ class AddressBook:
         return False
 
     def search_contacts_by_city_or_state(self, search_term: str) -> list[Contact]:
-        '''Searching contacts by city or state.'''
         return [contact for contact in self.__contacts if contact.get_city() == search_term or contact.get_state() == search_term]
 
     def get_contacts_by_city(self, city: str) -> list[Contact]:
@@ -176,7 +194,6 @@ class AddressBook:
         return len(self.__contacts_by_state[state])
 
     def sort_contacts_by_name(self) -> None:
-        '''Sorting contacts alphabetically.'''
         sorted_contacts = sorted(
             self.__contacts, key=lambda contact: contact.get_full_name())
         for contact in sorted_contacts:
@@ -266,13 +283,16 @@ class AddressBookMain:
             print('3. Show All Contacts')
             print('4. Edit Contact')
             print('5. Delete Contact')
-            print('6. Back to Main Menu')
+            print('6. Sort Contacts by Name')
+            print('7. Sort Contacts by City')
+            print('8. Sort Contacts by State')
+            print('9. Sort Contacts by Zip')
+            print('10. Back to Main Menu')
             option: int = self.__get_valid_int_input('Enter your option: ')
             if option == 1:
                 address_book.add_contact()
             elif option == 2:
-                num_contacts: int = self.__get_valid_int_input(
-                    "Enter the number of contacts to add: ")
+                num_contacts: int = self.__get_valid_int_input("Enter the number of contacts to add: ")
                 address_book.add_multiple_contacts(num_contacts)
             elif option == 3:
                 address_book.show_all_contacts()
@@ -281,11 +301,19 @@ class AddressBookMain:
             elif option == 5:
                 address_book.delete_contact()
             elif option == 6:
+                address_book.sort_contacts_by_name()
+            elif option == 7:
+                address_book.sort_contacts_by_city()
+            elif option == 8:
+                address_book.sort_contacts_by_state()
+            elif option == 9:
+                address_book.sort_contacts_by_zip()
+            elif option == 10:
                 print("Returning to Main Menu...")
                 break
             else:
                 print("Invalid option, please try again.")
-
+                
     def __show_all_address_books(self) -> None:
         if not self.__address_books:
             print("No address books found.")
